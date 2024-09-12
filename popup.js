@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     sendButton.style.backgroundColor = 'gray';
     sendButton.disabled = true;
+    sendButton.textContent = 'Wysyłam...';
 
     chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
       const pageUrl = tabs[0].url;
@@ -77,6 +78,7 @@ document.addEventListener('DOMContentLoaded', function () {
           .finally(() => {
             sendButton.style.backgroundColor = '';
             sendButton.disabled = false;
+            sendButton.textContent = 'Wyślij';
           });
     });
   });
