@@ -22,8 +22,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const serverUrl = serverUrlInput.value;
     const note = noteInput.value;
 
+    if (!apiKey) {
+      alert("Podaj API KEY");
+      return;
+    }
+
     if (!apiKey || !serverUrl) {
-      alert("Proszę wypełnić wszystkie pola.");
+      alert("Podaj API Key i adres serwera");
       return;
     }
     chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
@@ -33,16 +38,18 @@ document.addEventListener('DOMContentLoaded', function () {
         func: () => ({
           text: document.documentElement.innerText,
           title: document.title,
+          language: document.documentElement.lang || navigator.language // Pobieramy język strony
         })
       })
           .then(result => {
-            const { text, title } = result[0].result;
+            const { text, title, language } = result[0].result;
             const data = {
               note: note,
               url: pageUrl,
               type: "webpage",
               text: text,
-              title: title, // Dodajemy tytuł strony do wysyłanych danych
+              title: title,
+              language: language // Dodajemy język strony do wysyłanych danych
             };
 
             return fetch(serverUrl, {
