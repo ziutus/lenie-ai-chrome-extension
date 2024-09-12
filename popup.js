@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const serverUrl = serverUrlInput.value;
     const note = noteInput.value;
 
-    if (!apiKey || !serverUrl || !note) {
+    if (!apiKey || !serverUrl) {
       alert("Proszę wypełnić wszystkie pola.");
       return;
     }
