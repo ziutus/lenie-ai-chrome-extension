@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-
   const apiKeyInput = document.getElementById('apiKey');
   const serverUrlInput = document.getElementById('serverUrl');
   const noteInput = document.getElementById('note');
@@ -29,29 +28,32 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
       const pageUrl = tabs[0].url;
-      const data = {
-        note: note,
-        url: pageUrl,
-        type: "webpage",
-        text: null
-      };
-
       chrome.scripting.executeScript({
         target: { tabId: tabs[0].id },
-        func: () => document.documentElement.innerText
+        func: () => ({
+          text: document.documentElement.innerText,
+          title: document.title,
+        })
       })
-        .then(e => {
-          data.text = e[0].result;
-          return data;
-        })
-        .then(data => fetch(serverUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': apiKey
-          },
-          body: JSON.stringify(data)
-        })
+          .then(result => {
+            const { text, title } = result[0].result;
+            const data = {
+              note: note,
+              url: pageUrl,
+              type: "webpage",
+              text: text,
+              title: title, // Dodajemy tytuł strony do wysyłanych danych
+            };
+
+            return fetch(serverUrl, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': apiKey
+              },
+              body: JSON.stringify(data)
+            });
+          })
           .then(() => {
             alert('Notatka została wysłana pomyślnie!');
             noteInput.value = '';
@@ -60,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
           .catch(error => {
             alert('Błąd podczas wysyłania notatki.');
             console.error('Error:', error);
-          }));
+          });
     });
   });
 });
