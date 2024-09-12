@@ -31,6 +31,10 @@ document.addEventListener('DOMContentLoaded', function () {
       alert("Podaj API Key i adres serwera");
       return;
     }
+
+    sendButton.style.backgroundColor = 'gray';
+    sendButton.disabled = true;
+
     chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
       const pageUrl = tabs[0].url;
       chrome.scripting.executeScript({
@@ -69,6 +73,10 @@ document.addEventListener('DOMContentLoaded', function () {
           .catch(error => {
             alert('Błąd podczas wysyłania notatki.');
             console.error('Error:', error);
+          })
+          .finally(() => {
+            sendButton.style.backgroundColor = '';
+            sendButton.disabled = false;
           });
     });
   });
