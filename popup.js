@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const noteInput = document.getElementById('note');
   const sendButton = document.getElementById('sendButton');
   const paywallInputs = document.getElementsByName('paywall');
+  const typeSelect = document.getElementById('type'); // Dodane
 
   chrome.storage.sync.get(['apiKey', 'serverUrl'], function (data) {
     if (data.apiKey) apiKeyInput.value = data.apiKey;
@@ -22,14 +23,15 @@ document.addEventListener('DOMContentLoaded', function () {
     const apiKey = apiKeyInput.value;
     const serverUrl = serverUrlInput.value;
     const note = noteInput.value;
+    const type = typeSelect.value; // Dodane
 
     if (!apiKey) {
       alert("Podaj API KEY");
       return;
     }
 
-    if (!apiKey || !serverUrl) {
-      alert("Podaj API Key i adres serwera");
+    if (!serverUrl) {
+      alert("Podaj adres serwera");
       return;
     }
 
@@ -52,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function () {
         func: () => ({
           text: document.documentElement.innerText,
           title: document.title,
-          language: document.documentElement.lang || navigator.language // Pobieramy język strony
+          language: document.documentElement.lang || navigator.language
         })
       })
           .then(result => {
@@ -60,11 +62,11 @@ document.addEventListener('DOMContentLoaded', function () {
             const data = {
               note: note,
               url: pageUrl,
-              type: "webpage",
+              type: type, // Dodane
               text: text,
               title: title,
-              language: language, // Dodajemy język strony do wysyłanych danych
-              paywall: paywall // Dodajemy zmienną paywall
+              language: language,
+              paywall: paywall
             };
 
             return fetch(serverUrl, {
