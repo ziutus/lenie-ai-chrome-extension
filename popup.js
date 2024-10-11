@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const noteInput = document.getElementById('note');
   const sendButton = document.getElementById('sendButton');
   const paywallInputs = document.getElementsByName('paywall');
-  const typeSelect = document.getElementById('type'); // Dodane
+  const typeSelect = document.getElementById('type');
 
   chrome.storage.sync.get(['apiKey', 'serverUrl'], function (data) {
     if (data.apiKey) apiKeyInput.value = data.apiKey;
@@ -19,11 +19,19 @@ document.addEventListener('DOMContentLoaded', function () {
     chrome.storage.sync.set({ serverUrl: serverUrlInput.value });
   });
 
+  // Dodane: Automatyczne ustawienie typu na 'YouTube' przy odpowiednim adresie URL
+  chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
+    const pageUrl = tabs[0].url;
+    if (pageUrl.startsWith('https://www.youtube.com/watch') || pageUrl.startsWith('http://www.youtube.com/watch')) {
+      typeSelect.value = 'youtube';
+    }
+  });
+
   sendButton.addEventListener('click', function () {
     const apiKey = apiKeyInput.value;
     const serverUrl = serverUrlInput.value;
     const note = noteInput.value;
-    const type = typeSelect.value; // Dodane
+    const type = typeSelect.value;
 
     if (!apiKey) {
       alert("Podaj API KEY");
@@ -62,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const data = {
               note: note,
               url: pageUrl,
-              type: type, // Dodane
+              type: type,
               text: text,
               title: title,
               language: language,
