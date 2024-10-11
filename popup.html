@@ -4,30 +4,42 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Lenie AI</title>
-  
+
   <!-- Bootstrap CSS -->
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-  <div class="container mt-3 mb-3" style="width: 500px">
-    <h3>Konfiguracja</h3>
-    <div class="form-group">
-      <label for="apiKey">Klucz API:</label>
-      <input type="text" id="apiKey" class="form-control" placeholder="Wprowadź klucz API">
-    </div>
-    
-    <div class="form-group">
-      <label for="serverUrl">Adres serwera:</label>
-      <input type="text" id="serverUrl" class="form-control" value="https://pir31ejsf2.execute-api.us-east-1.amazonaws.com/v1/url_add" placeholder="https://pir31ejsf2.execute-api.us-east-1.amazonaws.com/v1/url_add">
-    </div>
-
-    <h3>Notatka</h3>
-    <div class="form-group">
-      <textarea id="note" class="form-control" rows="4" placeholder="Wpisz swoją notatkę"></textarea>
-    </div>
-
-    <button id="sendButton" class="btn btn-primary btn-block">Wyślij</button>
+<div class="container mt-3 mb-3" style="width: 500px">
+  <h3>Konfiguracja</h3>
+  <div class="form-group">
+    <label for="apiKey">Klucz API:</label>
+    <input type="text" id="apiKey" class="form-control" placeholder="Wprowadź klucz API">
   </div>
-  <script src="popup.js"></script>
+
+  <div class="form-group">
+    <label for="serverUrl">Adres serwera:</label>
+    <input type="text" id="serverUrl" class="form-control" value="https://pir31ejsf2.execute-api.us-east-1.amazonaws.com/v1/url_add" placeholder="https://pir31ejsf2.execute-api.us-east-1.amazonaws.com/v1/url_add">
+  </div>
+
+  <h3>Notatka</h3>
+  <div class="form-group">
+    <textarea id="note" class="form-control" rows="4" placeholder="Wpisz swoją notatkę"></textarea>
+  </div>
+
+  <div class="form-group">
+    <label>Paywall:</label>
+    <div>
+      <input type="radio" id="paywallTrue" name="paywall" value="true">
+      <label for="paywallTrue">Tak</label>
+    </div>
+    <div>
+      <input type="radio" id="paywallFalse" name="paywall" value="false" checked>
+      <label for="paywallFalse">Nie</label>
+    </div>
+  </div>
+
+  <button id="sendButton" class="btn btn-primary btn-block">Wyślij</button>
+</div>
+<script src="popup.js"></script>
 </body>
 </html>

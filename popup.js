@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const serverUrlInput = document.getElementById('serverUrl');
   const noteInput = document.getElementById('note');
   const sendButton = document.getElementById('sendButton');
+  const paywallInputs = document.getElementsByName('paywall');
 
   chrome.storage.sync.get(['apiKey', 'serverUrl'], function (data) {
     if (data.apiKey) apiKeyInput.value = data.apiKey;
@@ -32,6 +33,14 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
 
+    let paywall;
+    for (const input of paywallInputs) {
+      if (input.checked) {
+        paywall = input.value === 'true';
+        break;
+      }
+    }
+
     sendButton.style.backgroundColor = 'gray';
     sendButton.disabled = true;
     sendButton.textContent = 'Wysyłam...';
@@ -54,7 +63,8 @@ document.addEventListener('DOMContentLoaded', function () {
               type: "webpage",
               text: text,
               title: title,
-              language: language // Dodajemy język strony do wysyłanych danych
+              language: language, // Dodajemy język strony do wysyłanych danych
+              paywall: paywall // Dodajemy zmienną paywall
             };
 
             return fetch(serverUrl, {
