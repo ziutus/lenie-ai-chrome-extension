@@ -61,17 +61,19 @@ document.addEventListener('DOMContentLoaded', function () {
         target: { tabId: tabs[0].id },
         func: () => ({
           text: document.documentElement.innerText,
+          html: document.documentElement.outerHTML,
           title: document.title,
           language: document.documentElement.lang || navigator.language
         })
       })
           .then(result => {
-            const { text, title, language } = result[0].result;
+            const { text, html, title, language } = result[0].result;
             const data = {
               note: note,
               url: pageUrl,
               type: type,
               text: text,
+              html: html,
               title: title,
               language: language,
               paywall: paywall
@@ -87,12 +89,12 @@ document.addEventListener('DOMContentLoaded', function () {
             });
           })
           .then(() => {
-            alert('Notatka została wysłana pomyślnie!');
+            alert('Strona została dodana pomyślnie!');
             noteInput.value = '';
             setTimeout(() => window.close(), 500);
           })
           .catch(error => {
-            alert('Błąd podczas wysyłania notatki.');
+            alert('Błąd podczas wysyłania strony.');
             console.error('Error:', error);
           })
           .finally(() => {
