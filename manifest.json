@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Lenie AI assistant",
-  "version": "1.0.8",
-  "description": "Wtyczka do komunikacji z API",
+  "version": "1.0.9",
+  "description": "Wtyczka do komunikacji z API lenie-ai.eu",
   "permissions": ["storage", "activeTab", "tabs", "scripting"],
   "action": {
     "default_popup": "popup.html",
