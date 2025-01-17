@@ -5,6 +5,24 @@ document.addEventListener('DOMContentLoaded', function () {
   const sendButton = document.getElementById('sendButton');
   const paywallInputs = document.getElementsByName('paywall');
   const typeSelect = document.getElementById('type');
+  const sourceSelect = document.getElementById('source');
+  const ai_summary = document.getElementsByName('ai_summary');
+  const ai_correction = document.getElementsByName('ai_correction');
+  const chapter_list = document.getElementById('chapter_list');
+  const chapterListContainer= document.getElementById('chapterListContainer');
+
+  function toggleChapterListVisibility() {
+    if (typeSelect.value === 'youtube') {
+      chapterListContainer.style.display = 'block';
+    } else {
+      chapterListContainer.style.display = 'none';
+    }
+  }
+
+  toggleChapterListVisibility();
+
+  typeSelect.addEventListener('change', toggleChapterListVisibility);
+
 
   chrome.storage.sync.get(['apiKey', 'serverUrl'], function (data) {
     if (data.apiKey) apiKeyInput.value = data.apiKey;
@@ -25,6 +43,29 @@ document.addEventListener('DOMContentLoaded', function () {
     if (pageUrl.startsWith('https://www.youtube.com/watch') || pageUrl.startsWith('http://www.youtube.com/watch')) {
       typeSelect.value = 'youtube';
     }
+
+    chrome.scripting.executeScript(
+        {
+          target: { tabId: tabs[0].id },
+          func: () => document.title,
+        },
+        (results) => {
+
+          const pageTitleInput = document.getElementById('pageTitle');
+
+          // Debugowanie odpowiedzi z executeScript
+          if (!results || !results[0] || chrome.runtime.lastError) {
+            console.error("Error in executeScript:", chrome.runtime.lastError);
+            console.log("Results:", results);
+            pageTitleInput.value = 'Nie udało się pobrać tytułu';
+          } else {
+            pageTitleInput.value = results[0].result; // Ustaw tytuł w polu tekstowym
+          }
+
+
+        }
+    );
+
   });
 
   sendButton.addEventListener('click', function () {
@@ -32,6 +73,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const serverUrl = serverUrlInput.value;
     const note = noteInput.value;
     const type = typeSelect.value;
+    const title = document.getElementById('pageTitle').value;
+
 
     if (!apiKey) {
       alert("Podaj API KEY");
@@ -62,12 +105,11 @@ document.addEventListener('DOMContentLoaded', function () {
         func: () => ({
           text: document.documentElement.innerText,
           html: document.documentElement.outerHTML,
-          title: document.title,
           language: document.documentElement.lang || navigator.language
         })
       })
           .then(result => {
-            const { text, html, title, language } = result[0].result;
+            const { text, html, language } = result[0].result;
             const data = {
               note: note,
               url: pageUrl,
@@ -76,7 +118,11 @@ document.addEventListener('DOMContentLoaded', function () {
               html: html,
               title: title,
               language: language,
-              paywall: paywall
+              paywall: paywall,
+              source: sourceSelect.value,
+              ai_summary: Array.from(ai_summary).find(radio => radio.checked)?.value || null,
+              ai_correction: Array.from(ai_correction).find(radio => radio.checked)?.value || null,
+              chapter_list: chapter_list.value
             };
 
             return fetch(serverUrl, {
