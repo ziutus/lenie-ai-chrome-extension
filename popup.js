@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const ai_correction = document.getElementsByName('ai_correction');
   const chapter_list = document.getElementById('chapter_list');
   const chapterListContainer= document.getElementById('chapterListContainer');
+  const pageLanguage = document.getElementById('pageLanguage');
 
   function toggleChapterListVisibility() {
     if (typeSelect.value === 'youtube') {
@@ -48,19 +49,28 @@ document.addEventListener('DOMContentLoaded', function () {
     chrome.scripting.executeScript(
         {
           target: { tabId: tabs[0].id },
-          func: () => document.title,
+          func: () => ({
+            title: document.title,
+            language: document.documentElement.lang || navigator.language
+          })
         },
         (results) => {
 
           const pageTitleInput = document.getElementById('pageTitle');
+          const pageLanguageInput = document.getElementById('pageLanguage');
+
 
           // Debugowanie odpowiedzi z executeScript
           if (!results || !results[0] || chrome.runtime.lastError) {
             console.error("Error in executeScript:", chrome.runtime.lastError);
             console.log("Results:", results);
             pageTitleInput.value = 'Nie udało się pobrać tytułu';
+            pageLanguageInput.value = 'Nie udało się pobrać języka';
+
           } else {
-            pageTitleInput.value = results[0].result; // Ustaw tytuł w polu tekstowym
+            pageTitleInput.value = results[0].result.title;
+            pageLanguageInput.value = results[0].result.language;
+
           }
 
 
@@ -75,6 +85,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const note = noteInput.value;
     const type = typeSelect.value;
     const title = document.getElementById('pageTitle').value;
+    const language = document.getElementById('pageLanguage').value;
 
 
     if (!apiKey) {
@@ -106,7 +117,6 @@ document.addEventListener('DOMContentLoaded', function () {
         func: () => ({
           text: document.documentElement.innerText,
           html: document.documentElement.outerHTML,
-          language: document.documentElement.lang || navigator.language
         })
       })
           .then(result => {
