@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const pageUrl = tabs[0].url;
     if (pageUrl.startsWith('https://www.youtube.com/watch') || pageUrl.startsWith('http://www.youtube.com/watch')) {
       typeSelect.value = 'youtube';
+      chapterListContainer.style.display = 'block';
     }
 
     chrome.scripting.executeScript(
