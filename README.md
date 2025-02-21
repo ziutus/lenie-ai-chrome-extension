@@ -61,7 +61,7 @@ Rozszerzenie wymaga następujących uprawnień:
 
 ## Wersja
 
-Aktualna wersja: **1.0.16**
+Aktualna wersja: **1.0.17**
 
 ## Contributing
 

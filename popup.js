@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const chapter_list = document.getElementById('chapter_list');
   const chapterListContainer= document.getElementById('chapterListContainer');
   const pageLanguage = document.getElementById('pageLanguage');
+  const pageDescription = document.getElementById('pageDescription');
 
   function toggleChapterListVisibility() {
     if (typeSelect.value === 'youtube') {
@@ -51,6 +52,7 @@ document.addEventListener('DOMContentLoaded', function () {
           target: { tabId: tabs[0].id },
           func: () => ({
             title: document.title,
+            description: document.description || '',
             language: document.documentElement.lang || navigator.language
           })
         },
@@ -58,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
           const pageTitleInput = document.getElementById('pageTitle');
           const pageLanguageInput = document.getElementById('pageLanguage');
-
+          const pageDescriptionInput = document.getElementById('pageDescription');
 
           // Debugowanie odpowiedzi z executeScript
           if (!results || !results[0] || chrome.runtime.lastError) {
@@ -70,10 +72,8 @@ document.addEventListener('DOMContentLoaded', function () {
           } else {
             pageTitleInput.value = results[0].result.title;
             pageLanguageInput.value = results[0].result.language;
-
+            pageDescriptionInput.value = results[0].result.description;
           }
-
-
         }
     );
 
@@ -145,13 +145,22 @@ document.addEventListener('DOMContentLoaded', function () {
               body: JSON.stringify(data)
             });
           })
-          .then(() => {
+          .then(response => {
+            if (!response.ok) {
+              // Jeśli serwer zwróci błąd (np. 500), odrzucamy obietnicę
+              throw new Error(`Serwer zwrócił błąd: ${response.status} - ${response.statusText}`);
+            }
+            return response.json(); // lub response.text() w zależności od zwracanych danych
+          })
+          .then(data => {
+            // Jeśli odpowiedź jest poprawna, pokazujemy komunikat sukcesu
             alert('Strona została dodana pomyślnie!');
             noteInput.value = '';
             setTimeout(() => window.close(), 500);
           })
+
           .catch(error => {
-            alert('Błąd podczas wysyłania strony.');
+            alert(`Błąd podczas wysyłania strony: ${error.message}`);
             console.error('Error:', error);
           })
           .finally(() => {
